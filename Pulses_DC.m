@@ -1,4 +1,9 @@
-%% Initialize
+% Author: Celia Fernandez Brillet
+% Date: 11/15/22
+% Description:script to connect to Keithley 6221 and program it to send out
+% pulses or DC (monophasic or biphasic).
+
+%% Initialize Keithley, connect to it
 
 % Delete instrument objects that are still open 
 delete(instrfindall)
@@ -22,9 +27,20 @@ fprintf(t, 'curr:filt off')
 fprintf(t, 'outp:ishield guard')
 fprintf(t, 'outp:ltearth on')
 
+% The code below will create a waveform that is made up of a pattern of "25
+% points" (note: this can be changed depending on your needs). Because I want 
+% a pulse frequency of 400 Hz, those two numbers will define the duration
+% of each of the points in my waveform pattern. 1/400Hz = 2500 us. So, each
+% slot will be 100 us long. I chose the number of points in my waveform
+% (25) to get a resolution of 100 us. Now, say I want my phases to be 200
+% us long -- I'd need two points per phase. If I wanted an interphase gap
+% (IPG) of <100 us, I'd have to make my resolution smaller. For now, the smallest
+% IPG I could add would be 100 us. In this example, I won't have an IPG.
+
 % Cathodic first, two data points per phase, 21 for the interpulse gap
-% fprintf(t, 'sour:wave:arb:data -1,-1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0')
-fprintf(t, 'sour:wave:arb:data -1, 0.3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0')
+fprintf(t, 'sour:wave:arb:data -1,-1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0')
+% fprintf(t, 'sour:wave:arb:data -1, 0.3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0')
+% Choosing an arbitrary waveform (meaning we can define our string our values like in the line above)
 fprintf(t, 'sour:wave:func arb0')
 % Compliance voltage (V)
 fprintf(t, 'curr:comp 50')
@@ -52,7 +68,7 @@ fprintf(t, 'sour:wave:init')
 fprintf(t, 'sour:wave:abor')
 fprintf(t, 'sour:curr:rang:auto on')
 fprintf(t, 'curr:filt off')
-% Cathodic first, two data points per phase, 21 for the interpulse gap
+% Cathodic first, one data point per phase
 fprintf(t, 'sour:wave:arb:data -1,1')
 fprintf(t, 'sour:wave:func arb0')
 % Compliance voltage (V)
@@ -76,7 +92,7 @@ fprintf(t, 'sour:wave:init')
 fprintf(t, 'sour:wave:abor')
 fprintf(t, 'sour:curr:rang:auto on')
 fprintf(t, 'curr:filt off')
-% Cathodic first, two data points per phase, 21 for the interpulse gap
+% Cathodic phase
 fprintf(t, 'sour:wave:arb:data -1')
 fprintf(t, 'sour:wave:func arb0')
 % Compliance voltage (V)
